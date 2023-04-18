@@ -1,0 +1,34 @@
+#RECOGE SEGÚN PARÁMETROS UNA LISTA DE IPS DE UN ARCHIVO DE LOG DE COWRIE Y
+#LOSGUARDA EN UN TXT Y LOS MUESTRA POR PANTALLA
+
+import sys
+import re
+
+# Verificar que se proporcione un argumento de línea de comandos (nombre de archivo)
+if len(sys.argv) < 2:
+    print("Debe proporcionar el nombre del archivo como argumento.")
+    sys.exit()
+
+archivo_entrada = sys.argv[1]
+archivo_salida = "ips_encontradas.txt"
+
+# Abrir el archivo de entrada y buscar las líneas que contienen la palabra "failed"
+with open(archivo_entrada, "r") as f:
+    lineas = f.readlines()
+
+ips_encontradas = set()
+
+for linea in lineas:
+    if "failed" in linea:
+        # Si hay una dirección IP en la línea, guárdala en la lista de IPs encontradas
+        direccion_ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", linea)
+        if direccion_ip is not None:
+            ips_encontradas.add(direccion_ip.group())
+
+# Escribir las IPs encontradas en un archivo de salida
+with open(archivo_salida, "w") as f:
+    for ip in ips_encontradas:
+        f.write(ip + "\n")
+
+print("Se han encontrado las siguientes IPs: ")
+print(ips_encontradas)
